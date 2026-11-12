@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موسوعة شخصيات ريسبكت | RESPECT CFW Character Archive</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#09090c',
+                        cardBg: '#13131a',
+                        cardHover: '#1a1a24',
+                        purplePrimary: '#7c3aed',
+                        purpleHover: '#6d28d9',
+                        purpleNeon: '#a855f7',
+                        purpleGlow: 'rgba(168, 85, 247, 0.35)',
+                        borderDark: '#27272a',
+                        darkInput: '#181820'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #09090c;
+            color: #f3f4f6;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.08) 0%, transparent 35%),
+                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.06) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c3aed;
+        }
+
+        /* Glow effects */
+        .neon-border {
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);
+        }
+        .neon-border:hover {
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+        }
+        .neon-text-glow {
+            text-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+        }
+
+        /* Modal glassmorphism */
+        .glass-panel {
+            background: rgba(19, 19, 26, 0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(124, 58, 237, 0.25);
+        }
+
+        /* Timeline connector line */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 19px;
+            width: 2px;
+            background: linear-gradient(180deg, #7c3aed 0%, #27272a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-purplePrimary selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-borderDark/80 bg-cardBg/90 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="resetFilters()">
+                <div class="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-purplePrimary to-purpleNeon text-white font-black text-2xl shadow-lg shadow-purplePrimary/40 transform hover:scale-105 transition duration-300">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                    <span class="absolute -bottom-1 -left-1 flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purpleNeon opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-purplePrimary"></span>
+                    </span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl font-black tracking-wider text-white">RESPECT <span class="text-purpleNeon">CFW</span></h1>
+                        <span class="bg-purplePrimary/20 text-purpleNeon text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-purplePrimary/40">ARCHIVE</span>
+                    </div>
+                    <p class="text-xs text-gray-400 font-medium">موسوعة وسجل شخصيات السيرفر الرسمية</p>
+                </div>
+            </div>
+
+            <!-- Role Selector & Actions -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Role Selector Switcher -->
+                <div class="bg-darkBg p-1 rounded-xl border border-borderDark flex items-center gap-1 text-xs font-semibold">
+                    <span class="text-gray-400 px-2 text-[11px] hidden sm:inline"><i class="fa-solid fa-user-shield ml-1"></i>الصلاحية:</span>
+                    <button onclick="setRole('guest')" id="roleBtnGuest" class="px-2.5 py-1 rounded-lg transition">زائر</button>
+                    <button onclick="setRole('editor')" id="roleBtnEditor" class="px-2.5 py-1 rounded-lg transition">محرر</button>
+                    <button onclick="setRole('admin')" id="roleBtnAdmin" class="px-2.5 py-1 rounded-lg transition">مسؤول (Admin)</button>
+                </div>
+
+                <!-- Add Character Button -->
+                <button id="addCharBtn" onclick="openFormModal()" class="bg-gradient-to-r from-purplePrimary to-purpleNeon hover:from-purpleHover hover:to-purplePrimary text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition duration-300 shadow-lg shadow-purplePrimary/30 flex items-center gap-2 transform active:scale-95">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>إضافة شخصية</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+        
+        <!-- Hero Banner / Stats Bar -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-cardBg via-darkBg to-cardBg border border-purplePrimary/30 p-6 sm:p-8 mb-8 neon-border">
+            <div class="absolute -left-10 -bottom-10 w-48 h-48 bg-purplePrimary/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purplePrimary/10 border border-purplePrimary/30 text-purpleNeon text-xs font-bold mb-3">
+                        <i class="fa-solid fa-book-bookmark"></i> أرشيف ريسبكت التفاعلي
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-white mb-2 leading-tight">سجل التاريخ، المناصب، والحروب الكبرى</h2>
+                    <p class="text-gray-400 text-sm max-w-2xl leading-relaxed">استكشف مسيرة شخصيات مدينة ريسبكت CFW، تتبع تاريخهم من البداية حتى النهاية، واستعرض انتمائهم للعصابات والجهات الحكومية وإنجازاتهم الموثقة.</p>
+                </div>
+                
+                <!-- Quick Stats Badge -->
+                <div class="grid grid-cols-3 gap-3 w-full md:w-auto min-w-[260px]">
+                    <div class="bg-cardBg/80 border border-borderDark p-3 rounded-2xl text-center">
+                        <span id="statTotal" class="block text-xl font-black text-purpleNeon">0</span>
+                        <span class="text-[11px] text-gray-400 font-semibold">إجمالي الشخصيات</span>
+                    </div>
+                    <div class="bg-cardBg/80 border border-borderDark p-3 rounded-2xl text-center">
+                        <span id="statGangs" class="block text-xl font-black text-amber-400">0</span>
+                        <span class="text-[11px] text-gray-400 font-semibold">العصابات</span>
+                    </div>
+                    <div class="bg-cardBg/80 border border-borderDark p-3 rounded-2xl text-center">
+                        <span id="statGov" class="block text-xl font-black text-blue-400">0</span>
+                        <span class="text-[11px] text-gray-400 font-semibold">حكومي/شرطة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search & Category Filters Bar -->
+        <div class="flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center mb-8">
+            
+            <!-- Search Input Box -->
+            <div class="relative flex-grow max-w-2xl">
+                <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحث باسم الشخصية، اللقب، المنصب، أو العصابة..." 
+                       class="w-full bg-cardBg border border-borderDark rounded-2xl px-4 py-3.5 pr-11 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-purpleNeon focus:ring-1 focus:ring-purpleNeon transition duration-200">
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs bg-borderDark hover:bg-zinc-700 w-5 h-5 rounded-full items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Category Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
+                <button onclick="setCategoryFilter('all')" data-cat="all" class="cat-filter-btn px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition border border-purplePrimary bg-purplePrimary text-white shadow-md shadow-purplePrimary/20">
+                    <i class="fa-solid fa-layer-group ml-1.5"></i>الكل
+                </button>
+                <button onclick="setCategoryFilter('عصابة')" data-cat="عصابة" class="cat-filter-btn px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition border border-borderDark bg-cardBg text-gray-300 hover:border-purpleNeon hover:text-white">
+                    <i class="fa-solid fa-skull ml-1.5 text-amber-400"></i>العصابات
+                </button>
+                <button onclick="setCategoryFilter('شرطة/حكومي')" data-cat="شرطة/حكومي" class="cat-filter-btn px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition border border-borderDark bg-cardBg text-gray-300 hover:border-purpleNeon hover:text-white">
+                    <i class="fa-solid fa-building-shield ml-1.5 text-blue-400"></i>الشرطة/حكومي
+                </button>
+                <button onclick="setCategoryFilter('مدني')" data-cat="مدني" class="cat-filter-btn px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition border border-borderDark bg-cardBg text-gray-300 hover:border-purpleNeon hover:text-white">
+                    <i class="fa-solid fa-user-tie ml-1.5 text-emerald-400"></i>مدنيين
+                </button>
+                <button onclick="setCategoryFilter('منظمة سريّة')" data-cat="منظمة سريّة" class="cat-filter-btn px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition border border-borderDark bg-cardBg text-gray-300 hover:border-purpleNeon hover:text-white">
+                    <i class="fa-solid fa-mask ml-1.5 text-purpleNeon"></i>منظمة سريّة
+                </button>
+            </div>
+        </div>
+
+        <!-- Character Grid Section -->
+        <div id="charactersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamic JavaScript injection -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="emptyState" class="hidden text-center py-16 px-4 bg-cardBg/40 border border-dashed border-borderDark rounded-3xl my-8">
+            <div class="w-16 h-16 bg-purplePrimary/10 border border-purplePrimary/30 rounded-2xl flex items-center justify-center mx-auto text-purpleNeon text-2xl mb-4">
+                <i class="fa-solid fa-user-slash"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">لم يتم العثور على أي شخصية!</h3>
+            <p class="text-gray-400 text-xs max-w-md mx-auto mb-6">جرب تغيير كلمات البحث، أو اختر تصنيفاً آخر لمشاهدة شخصيات الموسوعة.</p>
+            <button onclick="resetFilters()" class="bg-borderDark hover:bg-zinc-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+                إعادة ضبط البحث
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-borderDark/80 bg-cardBg/60 py-6 mt-12 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-gray-300">RESPECT CFW ARCHIVE</span>
+                <span class="text-purpleNeon">•</span>
+                <span>حقوق الطبع والتأليف محفوظة لـ مجتمع ريسبكت © 2026</span>
+            </div>
+            <div class="flex items-center gap-4 text-gray-400">
+                <span class="hover:text-purpleNeon transition cursor-pointer" onclick="showToast('نظام الأرشيف يعمل بكفاءة عالية ⚡', 'info')"><i class="fa-solid fa-server ml-1"></i>السيرفر متصل</span>
+                <span class="hover:text-purpleNeon transition cursor-pointer" onclick="resetToDefaultData()"><i class="fa-solid fa-rotate-right ml-1"></i>استعادة البيانات الأصلية</span>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ==================== MODALS SECTION ==================== -->
+
+    <!-- 1. FULL CHARACTER DETAILS MODAL -->
+    <div id="viewModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+        <div class="glass-panel max-w-4xl w-full rounded-3xl overflow-hidden shadow-2xl relative my-auto border border-purplePrimary/30 flex flex-col max-h-[90vh]">
+            
+            <!-- Close Modal Button -->
+            <button onclick="closeModal('viewModal')" class="absolute top-4 left-4 z-20 w-9 h-9 rounded-full bg-black/60 text-gray-300 hover:text-white hover:bg-purplePrimary transition flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Profile Modal Banner & Header -->
+            <div class="relative bg-gradient-to-r from-purplePrimary/30 via-cardBg to-darkBg p-6 sm:p-8 border-b border-borderDark flex-shrink-0">
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
+                    <img id="viewAvatar" src="" alt="" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-purpleNeon shadow-xl shadow-purplePrimary/30 bg-darkBg">
+                    <div class="text-center sm:text-right flex-grow">
+                        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+                            <span id="viewCategoryBadge" class="px-3 py-1 rounded-full text-xs font-bold border"></span>
+                            <span id="viewStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold border"></span>
+                        </div>
+                        <h2 id="viewName" class="text-2xl sm:text-3xl font-black text-white mb-1"></h2>
+                        <p id="viewAlias" class="text-xs sm:text-sm text-purpleNeon font-bold mb-3"></p>
+                        <p id="viewCurrentRole" class="text-xs text-gray-300 font-semibold bg-darkBg/60 px-3 py-1.5 rounded-xl border border-borderDark inline-block">
+                            <i class="fa-solid fa-briefcase text-purpleNeon ml-1.5"></i><span id="viewRoleText"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Profile Content -->
+            <div class="p-6 sm:p-8 space-y-8 overflow-y-auto flex-grow">
+                
+                <!-- Short Bio -->
+                <div>
+                    <h3 class="text-sm font-bold text-purpleNeon mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-address-card"></i> السيرة والتعريف العام
+                    </h3>
+                    <p id="viewBio" class="text-xs sm:text-sm text-gray-300 leading-relaxed bg-darkBg/50 p-4 rounded-2xl border border-borderDark/60"></p>
+                </div>
+
+                <!-- Factions & Positions History -->
+                <div>
+                    <h3 class="text-sm font-bold text-purpleNeon mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-sitemap"></i> سجل الوظائف والمناصب والعصابات
+                    </h3>
+                    <div id="viewAffiliations" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Injected JS -->
+                    </div>
+                </div>
+
+                <!-- Detailed Timeline (From Beginning to End) -->
+                <div>
+                    <h3 class="text-sm font-bold text-purpleNeon mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-timeline"></i> التاريخ والخط الزمني (من البداية للنهاية)
+                    </h3>
+                    <div class="relative timeline-line pr-4 space-y-6" id="viewTimeline">
+                        <!-- Injected JS -->
+                    </div>
+                </div>
+
+                <!-- Major Wars & Achievements -->
+                <div>
+                    <h3 class="text-sm font-bold text-purpleNeon mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy"></i> الحروب الكبرى والإنجازات والخلافات
+                    </h3>
+                    <div id="viewAchievements" class="space-y-3">
+                        <!-- Injected JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-darkBg border-t border-borderDark flex justify-between items-center flex-shrink-0">
+                <span class="text-[11px] text-gray-500"><i class="fa-solid fa-lock ml-1"></i>سجل موثق في أرشيف RESPECT CFW</span>
+                <button onclick="closeModal('viewModal')" class="bg-borderDark hover:bg-zinc-700 text-white text-xs font-bold px-5 py-2 rounded-xl transition">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 2. CREATE / EDIT CHARACTER MODAL -->
+    <div id="formModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+        <div class="glass-panel max-w-3xl w-full rounded-3xl overflow-hidden shadow-2xl relative my-auto border border-purplePrimary/40 flex flex-col max-h-[90vh]">
+            
+            <!-- Header -->
+            <div class="bg-cardBg p-6 border-b border-borderDark flex justify-between items-center">
+                <h2 id="formModalTitle" class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-pen text-purpleNeon"></i> إضافة شخصية جديدة
+                </h2>
+                <button onclick="closeModal('formModal')" class="text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Form Content -->
+            <form id="characterForm" onsubmit="saveCharacter(event)" class="p-6 overflow-y-auto space-y-6">
+                <input type="hidden" id="charId">
+
+                <!-- Basic Information -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1.5">اسم الشخصية الكامل *</label>
+                        <input type="text" id="inputName" required placeholder="مثال: أليكس فانديتا" 
+                               class="w-full bg-darkInput border border-borderDark rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purpleNeon">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1.5">الرمز / اللقب الشهير</label>
+                        <input type="text" id="inputAlias" placeholder="مثال: العرّاب / El Padrino" 
+                               class="w-full bg-darkInput border border-borderDark rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purpleNeon">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1.5">التصنيف الرئيسي *</label>
+                        <select id="inputCategory" required class="w-full bg-darkInput border border-borderDark rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purpleNeon">
+                            <option value="عصابة">عصابة</option>
+                            <option value="شرطة/حكومي">شرطة / حكومي</option>
+                            <option value="مدني">مدني</option>
+                            <option value="منظمة سريّة">منظمة سريّة</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1.5">حالة الشخصية الحالية *</label>
+                        <select id="inputStatus" required class="w-full bg-darkInput border border-borderDark rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purpleNeon">
+                            <option value="حي">حي</option>
+                            <option value="متوفى">متوفى</option>
+                            <option value="مسجون">مسجون</option>
+                            <option value="غائب">غائب / متقاعد</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1.5">المنصب الحالية *</label>
+                        <input type="text" id="inputCurrentRole" required placeholder="مثال: قائد عصابة الفاجوس" 
+                               class="w-full bg-darkInput border border-borderDark rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purpleNeon">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1.5">رابط صورة الشخصية (Avatar Image URL)</label>
+                    <input type="url" id="inputAvatar" placeholder="https://images.unsplash.com/..." 
+                           class="w-full bg-darkInput border border-borderDark rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purpleNeon">
+                    <p class="text-[11px] text-gray-500 mt-1">اتركه فارغاً ليتم إنشاء صورة رمزية تلقائية.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1.5">نبذة مختصرة وسيرة عامة *</label>
+                    <textarea id="inputBio" rows="3" required placeholder="اكتب ملخصاً عن بداية ظهور الشخصية ودورها في المدينة..." 
+                              class="w-full bg-darkInput border border-borderDark rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purpleNeon"></textarea>
+                </div>
+
+                <!-- Dynamic Affiliations Builder -->
+                <div class="border-t border-borderDark pt-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="text-xs font-bold text-purpleNeon"><i class="fa-solid fa-sitemap ml-1"></i>المناصب والعصابات (سجل الانتماء)</label>
+                        <button type="button" onclick="addAffiliationInput()" class="text-[11px] bg-purplePrimary/20 text-purpleNeon hover:bg-purplePrimary hover:text-white px-2.5 py-1 rounded-lg transition font-bold">
+                            + إضافة منصب
+                        </button>
+                    </div>
+                    <div id="formAffiliationsContainer" class="space-y-2">
+                        <!-- Dynamic inputs injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Dynamic Timeline Builder -->
+                <div class="border-t border-borderDark pt-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="text-xs font-bold text-purpleNeon"><i class="fa-solid fa-timeline ml-1"></i>أحداث الخط الزمني (تاريخ الشخصية)</label>
+                        <button type="button" onclick="addTimelineInput()" class="text-[11px] bg-purplePrimary/20 text-purpleNeon hover:bg-purplePrimary hover:text-white px-2.5 py-1 rounded-lg transition font-bold">
+                            + إضافة مرحلة تاريخية
+                        </button>
+                    </div>
+                    <div id="formTimelineContainer" class="space-y-2">
+                        <!-- Dynamic inputs injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Dynamic Wars/Achievements Builder -->
+                <div class="border-t border-borderDark pt-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="text-xs font-bold text-purpleNeon"><i class="fa-solid fa-trophy ml-1"></i>الحروب والإنجازات</label>
+                        <button type="button" onclick="addAchievementInput()" class="text-[11px] bg-purplePrimary/20 text-purpleNeon hover:bg-purplePrimary hover:text-white px-2.5 py-1 rounded-lg transition font-bold">
+                            + إضافة حرب / إنجاز
+                        </button>
+                    </div>
+                    <div id="formAchievementsContainer" class="space-y-2">
+                        <!-- Dynamic inputs injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="border-t border-borderDark pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('formModal')" class="bg-borderDark hover:bg-zinc-700 text-gray-300 text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="bg-gradient-to-r from-purplePrimary to-purpleNeon hover:from-purpleHover hover:to-purplePrimary text-white text-xs font-bold px-6 py-2.5 rounded-xl transition shadow-lg shadow-purplePrimary/30">
+                        حفظ الشخصية في الأرشيف
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 3. DELETE CONFIRMATION MODAL -->
+    <div id="deleteModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 shadow-2xl relative border border-rose-500/30 text-center">
+            <div class="w-14 h-14 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-center justify-center mx-auto text-rose-500 text-2xl mb-4">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">تأكيد حذف الشخصية</h3>
+            <p class="text-xs text-gray-400 mb-6 leading-relaxed">هل أنت متأكد من حذف هذه الشخصية بشكل نهائي من موسوعة ريسبكت؟ لا يمكن التراجع عن هذا الإجراء بعد الحفظ.</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeModal('deleteModal')" class="bg-borderDark hover:bg-zinc-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition">
+                    إلغاء
+                </button>
+                <button id="confirmDeleteBtn" onclick="executeDelete()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-lg shadow-rose-600/30">
+                    تأكيد الحذف النهائي
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+    <script>
+        // Preset Rich Data for GTA V Roleplay (Respect CFW Server)
+        const DEFAULT_CHARACTERS = [
+            {
+                id: 'char-1',
+                name: 'أليكس فانديتا',
+                alias: 'العرّاب | El Padrino',
+                avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&auto=format&fit=crop&q=80',
+                category: 'عصابة',
+                status: 'حي',
+                currentRole: 'زعيم عصابة Vagos الإستراتيجية',
+                bio: 'وصل إلى مدينة ريسبكت كمهاجر عادي، وبدأ بتشكيل أول تحالف غير قانوني في الأحياء الجنوبية. يمتاز بالتخطيط العسكري البارد والدبلوماسية الماكرة مع باقي المنظمات.',
+                affiliations: [
+                    { rank: 'زعيم أعلى', faction: 'عصابة Vagos', period: '2023 - الحاضر', active: true },
+                    { rank: 'مؤسس ورئيس', faction: 'منظمة الخط الأسود التجاري', period: '2022 - 2023', active: false }
+                ],
+                timeline: [
+                    { year: '2022', title: 'الوصول والتأسيس', description: 'دخول المدينة وتجميع شبكة علاقات مع المهربين وتأسيس النواة الأولى.' },
+                    { year: '2023', title: 'إعلان الحلف الجنوبي', description: 'السيطرة التامة على مناطق الميناء وتوحيد النفوذ ضد التهديدات الخارجية.' },
+                    { year: '2024 - 2026', title: 'مرحلة النفوذ المطلق', description: 'إدارة أضخم صفقات التهريب والسيطرة الاقتصادية غير المباشرة.' }
+                ],
+                achievementsAndWars: [
+                    { type: 'war', title: 'معركة الميناء الكبرى', detail: 'الانتصار في الحرب الفاصلة ضد التحالف الشرقي وتأمين خطوط الإمداد.' },
+                    { type: 'achievement', title: 'إبرام هدنة ريسبكت التاريخية', detail: 'توقيع اتفاق عدم اعتداء بين كبرى عصابات السيرفر.' }
+                ],
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'char-2',
+                name: 'العميد راشد الأحمد',
+                alias: 'الصقر',
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+                category: 'شرطة/حكومي',
+                status: 'حي',
+                currentRole: 'قائد جهاز التدخل السريع (LSPD Commander)',
+                bio: 'شخصية قيادية صارمة في جهاز الشرطة، أدار العمليات الأمنية في أحلك الظروف ونجح في تقليص الجريمة المنظمة بنسبة عالية.',
+                affiliations: [
+                    { rank: 'قائد الجهاز', faction: 'شرطة ريسبكت LSPD', period: '2024 - الحاضر', active: true },
+                    { rank: 'رئيس وحدة SWAT', faction: 'الفرقة التكتيكية الخاصّة', period: '2023 - 2024', active: false }
+                ],
+                timeline: [
+                    { year: '2021', title: 'الانضمام لسلك الشرطة', description: 'تخرج بدرجة امتياز في الأكاديمية العسكرية.' },
+                    { year: '2023', title: 'ترقية استثنائية', description: 'قيادة عملية اقتحام مبنى البنك المركزي وتحرير الرهائن بنجاح كامل.' },
+                    { year: '2025', title: 'استلام قيادة القطاع', description: 'تحديث الهيكلية الأمنية وإعادة بناء منظومة الرادار والتدخل السريع.' }
+                ],
+                achievementsAndWars: [
+                    { type: 'achievement', title: 'وسام شرف ريسبكت الذهبي', detail: 'تقديراً لإحباط أكبر عملية سطو مسلح في تاريخ السيرفر.' },
+                    { type: 'war', title: 'حرب تطهير الأحياء المهجورة', detail: 'قاد حملة أمنية استمرت أسبوعين لتفكيك الشبكات الإجرامية.' }
+                ],
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'char-3',
+                name: 'دانيال "الشبح" روسي',
+                alias: 'Ghost',
+                avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+                category: 'منظمة سريّة',
+                status: 'متوفى',
+                currentRole: 'المؤسس السابق لشبكة Syndicate',
+                bio: 'العقل المدبر السابق للشبكة السريّة المخترقة للأنظمة. سقط في المعركة الكبرى بعد ملحمة مطاردة دراماتيكية ضد التحالف الحكومي.',
+                affiliations: [
+                    { rank: 'الرئيس الفعلي', faction: 'شبكة الكارتيل السريّة', period: '2022 - 2025', active: false }
+                ],
+                timeline: [
+                    { year: '2022', title: 'الظهور المتخفي', description: 'تنفيذ عمليات اغتيال وسرقة معلومات عالية الدقة دون ترك أثر.' },
+                    { year: '2025', title: 'سقوط الشبح', description: 'مواجهة نهاية المسيرة في كمين الجسر الشمالي وتوثيق نهاية الشخصية.' }
+                ],
+                achievementsAndWars: [
+                    { type: 'war', title: 'ملحمة الجسر الشمالي', detail: 'المعركة الأخيرة التي شهدت تغطية واسعة وحضوراً تاريخياً لجميع القطاعات.' }
+                ],
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'char-4',
+                name: 'المحامي سيف الدين منصور',
+                alias: 'الدرع القانوني',
+                avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80',
+                category: 'مدني',
+                status: 'حي',
+                currentRole: 'رئيس نقابة المحامين المستقلة',
+                bio: 'دفاعه المستميت عن حقوق المدنيين والمتهمين جعله الشخصية الأكثر تأثيراً في المحاكم والساحة القانونية داخل المدينة.',
+                affiliations: [
+                    { rank: 'نقيب المحامين', faction: 'مكتب العدالة والمحاماة', period: '2023 - الحاضر', active: true }
+                ],
+                timeline: [
+                    { year: '2023', title: 'افتتاح مكتب العدالة', description: 'بدء كسب القضايا المعقدة وتشكيل فريق دفاع محترف.' },
+                    { year: '2024', title: 'تعديل دستور المحاكم', description: 'المساهمة في صياغة اللائحة القانونية الجديدة بالتعاون مع القضاة.' }
+                ],
+                achievementsAndWars: [
+                    { type: 'achievement', title: 'براءة قضية المطار الكبرى', detail: 'النجاح في تبرئة موكلين في قضية رأي عام معقدة.' }
+                ],
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        // State Management
+        let characters = [];
+        let currentRole = 'admin'; // 'admin' | 'editor' | 'guest'
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let targetDeleteId = null;
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCharacters();
+            setRole('admin'); // Default active role for demo ease
+        });
+
+        // Load data from LocalStorage or Set Default
+        function loadCharacters() {
+            const stored = localStorage.getItem('RESPECT_CHARACTERS_V1');
+            if (stored) {
+                try {
+                    characters = JSON.parse(stored);
+                } catch (e) {
+                    characters = DEFAULT_CHARACTERS;
+                }
+            } else {
+                characters = DEFAULT_CHARACTERS;
+                saveToLocalStorage();
+            }
+            renderApp();
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('RESPECT_CHARACTERS_V1', JSON.stringify(characters));
+        }
+
+        function resetToDefaultData() {
+            if (confirm('هل ترغب في إعادة جميع شخصيات الموسوعة إلى البيانات الأصلية؟')) {
+                characters = DEFAULT_CHARACTERS;
+                saveToLocalStorage();
+                renderApp();
+                showToast('تم استعادة البيانات الأصلية للموسوعة بنجاح!', 'success');
+            }
+        }
+
+        // Role Management (Permissions Gating)
+        function setRole(role) {
+            currentRole = role;
+            
+            // Update UI role buttons
+            const roles = ['guest', 'editor', 'admin'];
+            roles.forEach(r => {
+                const btn = document.getElementById(`roleBtn${r.charAt(0).toUpperCase() + r.slice(1)}`);
+                if (r === role) {
+                    btn.className = 'px-3 py-1 rounded-lg transition bg-purplePrimary text-white font-bold shadow-sm';
+                } else {
+                    btn.className = 'px-2.5 py-1 rounded-lg transition text-gray-400 hover:text-white';
+                }
+            });
+
+            // Toggle Add Character button visibility
+            const addBtn = document.getElementById('addCharBtn');
+            if (role === 'guest') {
+                addBtn.classList.add('hidden');
+            } else {
+                addBtn.classList.remove('hidden');
+            }
+
+            renderApp();
+            showToast(`تم تبديل الصلاحية إلى: ${role === 'admin' ? 'مسؤول (Admin)' : role === 'editor' ? 'محرر' : 'زائر'}`, 'info');
+        }
+
+        // Filtering & Search
+        function setCategoryFilter(category) {
+            currentCategory = category;
+            document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                if (btn.dataset.cat === category) {
+                    btn.className = 'cat-filter-btn px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition border border-purplePrimary bg-purplePrimary text-white shadow-md shadow-purplePrimary/20';
+                } else {
+                    btn.className = 'cat-filter-btn px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition border border-borderDark bg-cardBg text-gray-300 hover:border-purpleNeon hover:text-white';
+                }
+            });
+            renderApp();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchQuery.length > 0) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+            renderApp();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            handleSearch();
+        }
+
+        function resetFilters() {
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            setCategoryFilter('all');
+        }
+
+        // Render Character Cards & Statistics
+        function renderApp() {
+            const grid = document.getElementById('charactersGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            // Filter logic
+            const filtered = characters.filter(char => {
+                const matchCategory = currentCategory === 'all' || char.category === currentCategory;
+                const matchSearch = !searchQuery || 
+                    char.name.toLowerCase().includes(searchQuery) ||
+                    (char.alias && char.alias.toLowerCase().includes(searchQuery)) ||
+                    char.currentRole.toLowerCase().includes(searchQuery) ||
+                    char.category.toLowerCase().includes(searchQuery);
+                return matchCategory && matchSearch;
+            });
+
+            // Update Stats
+            document.getElementById('statTotal').innerText = characters.length;
+            document.getElementById('statGangs').innerText = characters.filter(c => c.category === 'عصابة').length;
+            document.getElementById('statGov').innerText = characters.filter(c => c.category === 'شرطة/حكومي').length;
+
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            // Render each card
+            filtered.forEach(char => {
+                const card = document.createElement('div');
+                card.className = 'bg-cardBg border border-borderDark/90 rounded-3xl p-5 flex flex-col justify-between hover:border-purpleNeon/60 hover:bg-cardHover transition-all duration-300 neon-border group relative';
+
+                // Status Badge styling
+                let statusBadgeClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+                if (char.status === 'متوفى') statusBadgeClass = 'bg-rose-500/10 text-rose-400 border-rose-500/30';
+                if (char.status === 'مسجون') statusBadgeClass = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+                if (char.status === 'غائب') statusBadgeClass = 'bg-purple-500/10 text-purple-300 border-purple-500/30';
+
+                // Category styling
+                let categoryBadgeClass = 'bg-purplePrimary/10 text-purpleNeon border-purplePrimary/30';
+                if (char.category === 'شرطة/حكومي') categoryBadgeClass = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
+                if (char.category === 'مدني') categoryBadgeClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+
+                // Default Avatar Fallback
+                const avatarSrc = char.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(char.name)}&background=7c3aed&color=fff`;
+
+                // Render Edit/Delete Action Controls depending on User Role
+                let adminActionsHtml = '';
+                if (currentRole === 'admin') {
+                    adminActionsHtml = `
+                        <button onclick="event.stopPropagation(); openEditModal('${char.id}')" title="تعديل" class="w-8 h-8 rounded-xl bg-darkBg hover:bg-purplePrimary text-gray-300 hover:text-white border border-borderDark flex items-center justify-center transition">
+                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); promptDelete('${char.id}')" title="حذف" class="w-8 h-8 rounded-xl bg-darkBg hover:bg-rose-600 text-gray-300 hover:text-white border border-borderDark flex items-center justify-center transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    `;
+                } else if (currentRole === 'editor') {
+                    adminActionsHtml = `
+                        <button onclick="event.stopPropagation(); openEditModal('${char.id}')" title="تعديل" class="w-8 h-8 rounded-xl bg-darkBg hover:bg-purplePrimary text-gray-300 hover:text-white border border-borderDark flex items-center justify-center transition">
+                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <!-- Card Top Info Header -->
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold border ${categoryBadgeClass}">${char.category}</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${statusBadgeClass}">
+                                <i class="fa-solid fa-circle text-[7px] ml-1"></i>${char.status}
+                            </span>
+                        </div>
+
+                        <!-- Avatar & Main Title -->
+                        <div class="flex items-center gap-3.5 mb-4">
+                            <img src="${avatarSrc}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(char.name)}&background=7c3aed&color=fff'" 
+                                 class="w-14 h-14 rounded-2xl object-cover border border-purplePrimary/40 group-hover:scale-105 transition duration-300 shadow-md">
+                            <div>
+                                <h3 class="text-base font-bold text-white group-hover:text-purpleNeon transition line-clamp-1">${char.name}</h3>
+                                <p class="text-xs text-purpleNeon/80 font-semibold line-clamp-1">${char.alias || 'بدون لقب'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Position & Bio -->
+                        <div class="space-y-2 mb-4">
+                            <p class="text-xs text-gray-300 font-semibold bg-darkBg/70 px-3 py-1.5 rounded-xl border border-borderDark/80 line-clamp-1">
+                                <i class="fa-solid fa-shield-cat text-purpleNeon ml-1.5"></i>${char.currentRole}
+                            </p>
+                            <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">${char.bio}</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer Actions -->
+                    <div class="pt-3 border-t border-borderDark/80 flex justify-between items-center mt-2">
+                        <button onclick="openViewModal('${char.id}')" class="text-xs font-bold text-purpleNeon hover:text-white flex items-center gap-1.5 transition">
+                            <span>عرض التاريخ الكامل</span>
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                        </button>
+                        <div class="flex items-center gap-1.5">
+                            ${adminActionsHtml}
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        // View Full Character Profile Modal
+        function openViewModal(id) {
+            const char = characters.find(c => c.id === id);
+            if (!char) return;
+
+            document.getElementById('viewName').innerText = char.name;
+            document.getElementById('viewAlias').innerText = char.alias ? `(${char.alias})` : '';
+            document.getElementById('viewRoleText').innerText = char.currentRole;
+            document.getElementById('viewBio').innerText = char.bio;
+            
+            const avatarImg = document.getElementById('viewAvatar');
+            avatarImg.src = char.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(char.name)}&background=7c3aed&color=fff`;
+            avatarImg.onerror = () => { avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(char.name)}&background=7c3aed&color=fff`; };
+
+            // Status Badge
+            const statusBadge = document.getElementById('viewStatusBadge');
+            statusBadge.innerText = char.status;
+            statusBadge.className = `px-3 py-1 rounded-full text-xs font-bold border ${
+                char.status === 'حي' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
+                char.status === 'متوفى' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+            }`;
+
+            // Category Badge
+            const catBadge = document.getElementById('viewCategoryBadge');
+            catBadge.innerText = char.category;
+            catBadge.className = 'px-3 py-1 rounded-full text-xs font-bold border bg-purplePrimary/10 text-purpleNeon border-purplePrimary/30';
+
+            // Affiliations Rendering
+            const affContainer = document.getElementById('viewAffiliations');
+            affContainer.innerHTML = '';
+            if (char.affiliations && char.affiliations.length > 0) {
+                char.affiliations.forEach(aff => {
+                    affContainer.innerHTML += `
+                        <div class="bg-darkBg p-3 rounded-2xl border border-borderDark flex justify-between items-center">
+                            <div>
+                                <h4 class="text-xs font-bold text-white">${aff.faction}</h4>
+                                <p class="text-[11px] text-gray-400">${aff.rank}</p>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-1 rounded-lg ${aff.active ? 'bg-purplePrimary/20 text-purpleNeon' : 'bg-zinc-800 text-gray-400'}">${aff.period}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                affContainer.innerHTML = `<p class="text-xs text-gray-500 col-span-2">لا توجد مناصب سابقة مسجلة.</p>`;
+            }
+
+            // Timeline Rendering
+            const timelineContainer = document.getElementById('viewTimeline');
+            timelineContainer.innerHTML = '';
+            if (char.timeline && char.timeline.length > 0) {
+                char.timeline.forEach(item => {
+                    timelineContainer.innerHTML += `
+                        <div class="relative pr-6">
+                            <div class="absolute right-[-23px] top-1.5 w-3 h-3 rounded-full bg-purpleNeon ring-4 ring-darkBg"></div>
+                            <span class="text-[10px] font-bold text-purpleNeon bg-purplePrimary/10 px-2 py-0.5 rounded border border-purplePrimary/30">${item.year}</span>
+                            <h4 class="text-xs sm:text-sm font-bold text-white mt-1">${item.title}</h4>
+                            <p class="text-xs text-gray-400 mt-1 leading-relaxed">${item.description}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                timelineContainer.innerHTML = `<p class="text-xs text-gray-500">لم تتم إضافة أحداث خط زمني بعد.</p>`;
+            }
+
+            // Achievements & Wars Rendering
+            const achContainer = document.getElementById('viewAchievements');
+            achContainer.innerHTML = '';
+            if (char.achievementsAndWars && char.achievementsAndWars.length > 0) {
+                char.achievementsAndWars.forEach(ach => {
+                    const icon = ach.type === 'war' ? 'fa-skull-crossbones text-rose-400' : 'fa-trophy text-amber-400';
+                    achContainer.innerHTML += `
+                        <div class="bg-darkBg/60 p-3.5 rounded-2xl border border-borderDark/80 flex items-start gap-3">
+                            <i class="fa-solid ${icon} text-base mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">${ach.title}</h4>
+                                <p class="text-xs text-gray-400 mt-0.5">${ach.detail}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                achContainer.innerHTML = `<p class="text-xs text-gray-500">لا توجد إنجازات أو حروب موثقة مسبقاً.</p>`;
+            }
+
+            openModal('viewModal');
+        }
+
+        // CREATE / EDIT FORM BUILDER & LOGIC
+        function openFormModal(editCharId = null) {
+            if (currentRole === 'guest') {
+                showToast('غير مسموح للزوار بإضافة أو تعديل الشخصيات.', 'error');
+                return;
+            }
+
+            // Password protection for adding and editing characters.
+            const passwordAction = editCharId ? 'تعديل شخصية' : 'إضافة شخصية';
+            const enteredPassword = prompt(`أدخل كلمة المرور من أجل ${passwordAction}:`);
+            if (enteredPassword !== '0391') {
+                showToast('كلمة المرور غير صحيحة، لم يتم تنفيذ العملية.', 'error');
+                return;
+            }
+
+            const form = document.getElementById('characterForm');
+            form.reset();
+
+            // Clear Dynamic containers
+            document.getElementById('formAffiliationsContainer').innerHTML = '';
+            document.getElementById('formTimelineContainer').innerHTML = '';
+            document.getElementById('formAchievementsContainer').innerHTML = '';
+
+            if (editCharId) {
+                // EDIT MODE
+                const char = characters.find(c => c.id === editCharId);
+                if (!char) return;
+
+                document.getElementById('formModalTitle').innerHTML = `<i class="fa-solid fa-user-pen text-purpleNeon"></i> تعديل شخصية: ${char.name}`;
+                document.getElementById('charId').value = char.id;
+                document.getElementById('inputName').value = char.name;
+                document.getElementById('inputAlias').value = char.alias || '';
+                document.getElementById('inputCategory').value = char.category;
+                document.getElementById('inputStatus').value = char.status;
+                document.getElementById('inputCurrentRole').value = char.currentRole;
+                document.getElementById('inputAvatar').value = char.avatar || '';
+                document.getElementById('inputBio').value = char.bio;
+
+                // Populate Dynamic Fields
+                if (char.affiliations) char.affiliations.forEach(aff => addAffiliationInput(aff));
+                if (char.timeline) char.timeline.forEach(t => addTimelineInput(t));
+                if (char.achievementsAndWars) char.achievementsAndWars.forEach(a => addAchievementInput(a));
+
+            } else {
+                // CREATE MODE
+                document.getElementById('formModalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-purpleNeon"></i> إضافة شخصية جديدة الموسوعة`;
+                document.getElementById('charId').value = '';
+                
+                // Add one default empty field for each
+                addAffiliationInput();
+                addTimelineInput();
+                addAchievementInput();
+            }
+
+            openModal('formModal');
+        }
+
+        function openEditModal(id) {
+            openFormModal(id);
+        }
+
+        // Dynamic Field Helpers
+        function addAffiliationInput(data = { faction: '', rank: '', period: '', active: true }) {
+            const container = document.getElementById('formAffiliationsContainer');
+            const div = document.createElement('div');
+            div.className = 'grid grid-cols-1 sm:grid-cols-3 gap-2 bg-darkBg p-2 rounded-xl border border-borderDark relative group';
+            div.innerHTML = `
+                <input type="text" placeholder="اسم الجهة/العصابة" value="${data.faction}" class="aff-faction bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+                <input type="text" placeholder="الرتبة/المنصب" value="${data.rank}" class="aff-rank bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+                <div class="flex gap-2">
+                    <input type="text" placeholder="الفترة (2023-2025)" value="${data.period}" class="aff-period w-full bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-rose-400 hover:text-rose-300 p-2"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function addTimelineInput(data = { year: '', title: '', description: '' }) {
+            const container = document.getElementById('formTimelineContainer');
+            const div = document.createElement('div');
+            div.className = 'space-y-2 bg-darkBg p-2.5 rounded-xl border border-borderDark relative';
+            div.innerHTML = `
+                <div class="flex gap-2">
+                    <input type="text" placeholder="السنة/التاريخ" value="${data.year}" class="time-year w-1/3 bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+                    <input type="text" placeholder="عنوان الحدث" value="${data.title}" class="time-title w-2/3 bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-rose-400 hover:text-rose-300 p-2"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="text" placeholder="تفاصيل الحدث التاريخي" value="${data.description}" class="time-desc w-full bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+            `;
+            container.appendChild(div);
+        }
+
+        function addAchievementInput(data = { type: 'achievement', title: '', detail: '' }) {
+            const container = document.getElementById('formAchievementsContainer');
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 bg-darkBg p-2.5 rounded-xl border border-borderDark';
+            div.innerHTML = `
+                <select class="ach-type bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white w-1/4">
+                    <option value="achievement" ${data.type === 'achievement' ? 'selected' : ''}>إنجاز</option>
+                    <option value="war" ${data.type === 'war' ? 'selected' : ''}>حرب/خلاف</option>
+                </select>
+                <input type="text" placeholder="العنوان الرئيسي" value="${data.title}" class="ach-title w-1/3 bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+                <input type="text" placeholder="التفاصيل" value="${data.detail}" class="ach-detail w-1/3 bg-darkInput border border-borderDark rounded-lg p-2 text-xs text-white">
+                <button type="button" onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-300 p-2"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        // Save Form Logic
+        function saveCharacter(e) {
+            e.preventDefault();
+
+            const charId = document.getElementById('charId').value;
+            const name = document.getElementById('inputName').value.trim();
+            const alias = document.getElementById('inputAlias').value.trim();
+            const category = document.getElementById('inputCategory').value;
+            const status = document.getElementById('inputStatus').value;
+            const currentRole = document.getElementById('inputCurrentRole').value.trim();
+            const avatar = document.getElementById('inputAvatar').value.trim();
+            const bio = document.getElementById('inputBio').value.trim();
+
+            // Collect Affiliations
+            const affiliations = [];
+            document.querySelectorAll('#formAffiliationsContainer > div').forEach(row => {
+                const faction = row.querySelector('.aff-faction').value.trim();
+                const rank = row.querySelector('.aff-rank').value.trim();
+                const period = row.querySelector('.aff-period').value.trim();
+                if (faction) affiliations.push({ faction, rank, period, active: true });
+            });
+
+            // Collect Timeline
+            const timeline = [];
+            document.querySelectorAll('#formTimelineContainer > div').forEach(row => {
+                const year = row.querySelector('.time-year').value.trim();
+                const title = row.querySelector('.time-title').value.trim();
+                const description = row.querySelector('.time-desc').value.trim();
+                if (year && title) timeline.push({ year, title, description });
+            });
+
+            // Collect Achievements
+            const achievementsAndWars = [];
+            document.querySelectorAll('#formAchievementsContainer > div').forEach(row => {
+                const type = row.querySelector('.ach-type').value;
+                const title = row.querySelector('.ach-title').value.trim();
+                const detail = row.querySelector('.ach-detail').value.trim();
+                if (title) achievementsAndWars.push({ type, title, detail });
+            });
+
+            if (charId) {
+                // Update Existing
+                const index = characters.findIndex(c => c.id === charId);
+                if (index !== -1) {
+                    characters[index] = {
+                        ...characters[index],
+                        name, alias, category, status, currentRole, avatar, bio,
+                        affiliations, timeline, achievementsAndWars
+                    };
+                    showToast('تم تحديث بيانات الشخصية بنجاح!', 'success');
+                }
+            } else {
+                // Create New
+                const newChar = {
+                    id: 'char-' + Date.now(),
+                    name, alias, category, status, currentRole, avatar, bio,
+                    affiliations, timeline, achievementsAndWars,
+                    createdAt: new Date().toISOString()
+                };
+                characters.unshift(newChar);
+                showToast('تمت إضافة الشخصية الجديدة للأرشيف بنجاح!', 'success');
+            }
+
+            saveToLocalStorage();
+            renderApp();
+            closeModal('formModal');
+        }
+
+        // Delete Logic
+        function promptDelete(id) {
+            if (currentRole !== 'admin') {
+                showToast('عذراً، صلاحية المسؤول (Admin) مطلوبة لحذف الشخصيات.', 'error');
+                return;
+            }
+            const enteredPassword = prompt('أدخل كلمة المرور لحذف الشخصية:');
+            if (enteredPassword !== '0391') {
+                showToast('كلمة المرور غير صحيحة، لم يتم حذف الشخصية.', 'error');
+                return;
+            }
+            targetDeleteId = id;
+            openModal('deleteModal');
+        }
+
+        function executeDelete() {
+            if (!targetDeleteId) return;
+            characters = characters.filter(c => c.id !== targetDeleteId);
+            saveToLocalStorage();
+            renderApp();
+            closeModal('deleteModal');
+            targetDeleteId = null;
+            showToast('تم حذف الشخصية من الأرشيف بنجاح.', 'info');
+        }
+
+        // Modal Controls
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Custom Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-darkBg border-purplePrimary text-white';
+            let icon = 'fa-circle-info text-purpleNeon';
+
+            if (type === 'success') {
+                bgClass = 'bg-darkBg border-emerald-500 text-white';
+                icon = 'fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                bgClass = 'bg-darkBg border-rose-500 text-white';
+                icon = 'fa-circle-exclamation text-rose-400';
+            }
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border ${bgClass} shadow-xl text-xs font-bold transition transform translate-y-4 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            // Auto dismiss
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
